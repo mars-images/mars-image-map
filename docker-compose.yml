@@ -1,30 +1,56 @@
 version: "3.3"
 
 volumes:
-  redis-data: null
   postgres-data: null
+  gem_cache: null
+  shared_data: null
 
 networks:
-  rover-map:
+  mars-images-network:
 
 services:
   redis:
-    image: redis
+    image: redis:6.0-alpine
     command: redis-server --requirepass password
     ports:
-      - "6379:6379"
+      - 6379:6379
     volumes:
-      - "redis-data:/data"
+      - shared_data:/var/shared/redis
     networks:
-      - rover-map
+      - mars-images-network
 
   postgresql:
-    image: "postgres:10"
+    image: postgres:11-alpine
+    container_name: mars-images-db
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - "postgres-data:/var/lib/postgresql/data"
+      - postgres-data:/var/lib/postgresql/data
+      - shared_data:/var/shared
     networks:
-      - rover-map
+      - mars-images-network
+
+  mars-images-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: mars-images-app
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/var/app
+      - shared_data:/var/shared
+      - gem_cache:/usr/local/bundle/gems
+    networks:
+      - mars-images-network
+    stdin_open: true
+    tty: true
+    env_file: .env.development
+    entrypoint: dev-entrypoint.sh
+    command: ["rails", "server", "-p", "5000", "-b", "0.0.0.0"]
+    environment:
+      RAILS_ENV: development
+    depends_on:
+      - postgresql
