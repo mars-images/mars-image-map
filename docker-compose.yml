@@ -39,11 +39,30 @@ services:
       - "5000:5000"
     env_file:
       - .env
+    environment:
+      WEBPACKER_DEV_SERVER_HOST: webpack
     depends_on:
       - postgresql
       - redis
+      - webpack
     volumes:
       - ./:/opt/app
       - gem_cache:/usr/local/bundle/gems
+    networks:
+      - mars-images-network
+  
+  webpack:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: ./bin/webpack-dev-server
+    ports:
+      - "3035:3035"
+    environment:
+      NODE_ENV: development
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+    volumes:
+      - ./:/opt/app
     networks:
       - mars-images-network
