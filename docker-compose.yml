@@ -1,6 +1,7 @@
 version: "3.3"
 
 volumes:
+  redis-data: null
   postgres-data: null
   gem_cache: null
 
@@ -9,25 +10,23 @@ networks:
 
 services:
   redis:
-    image: redis:6.0-alpine
+    image: redis
     command: redis-server --requirepass password
     ports:
       - 6379:6379
     volumes:
-      - shared_data:/var/shared/redis
+      - "redis-data:/data"
     networks:
       - mars-images-network
 
   postgresql:
-    image: postgres:11-alpine
-    container_name: mars-images-db
+    image: postgres:10
     ports:
       - 5432:5432
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - shared_data:/var/shared
+      - "postgres-data:/var/lib/postgresql/data"
     networks:
       - mars-images-network
 
@@ -65,5 +64,6 @@ services:
       WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
     volumes:
       - ./:/opt/app
+      - gem_cache:/usr/local/bundle/gems
     networks:
       - mars-images-network
