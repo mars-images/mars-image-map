@@ -18,3 +18,18 @@ git clone git@github.com:mars-images/mars-image-map.git
 
 cd mars-image-map
 ```
+
+configure local environment variables
+```
+cp .env-example .env
+```
+
+get it going
+```
+make run
+
+// this is a shortcut for
+// docker-compose up --build
+```
+
+take a look at the Makefile for all the shortcuts
