@@ -3,7 +3,6 @@ version: "3.3"
 volumes:
   postgres-data: null
   gem_cache: null
-  shared_data: null
 
 networks:
   mars-images-network:
@@ -32,25 +31,39 @@ services:
     networks:
       - mars-images-network
 
-  mars-images-app:
+  web:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: mars-images-app
+    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
     ports:
-      - 5000:5000
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      WEBPACKER_DEV_SERVER_HOST: webpack
+    depends_on:
+      - postgresql
+      - redis
+      - webpack
     volumes:
-      - .:/var/app
-      - shared_data:/var/shared
+      - ./:/opt/app
       - gem_cache:/usr/local/bundle/gems
     networks:
       - mars-images-network
-    stdin_open: true
-    tty: true
-    env_file: .env.development
-    entrypoint: dev-entrypoint.sh
-    command: ["rails", "server", "-p", "5000", "-b", "0.0.0.0"]
+  
+  webpack:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: ./bin/webpack-dev-server
+    ports:
+      - "3035:3035"
     environment:
+      NODE_ENV: development
       RAILS_ENV: development
-    depends_on:
-      - postgresql
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+    volumes:
+      - ./:/opt/app
+    networks:
+      - mars-images-network
