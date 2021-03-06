@@ -44,4 +44,12 @@ make run
 // docker-compose up --build
 ```
 
+create local database
+```
+make db.setup
+
+// this is a shortcut for
+// docker-compose run web bundle exec rails db:setup
+```
+
 take a look at the Makefile for all the shortcuts
