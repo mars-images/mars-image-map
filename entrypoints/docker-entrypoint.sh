@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Environment: $RAILS_ENV"
+echo "App Environment: $RAILS_ENV"
 
 # Remove pre-existing puma server.pid
 if [ -f tmp/pids/server.pid ]; then

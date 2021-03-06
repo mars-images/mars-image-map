@@ -3,10 +3,7 @@ run: docker.run
 docker.run:
 	docker-compose up --build
 
-app.run:
-	foreman start -f Procfile.dev
-
-docker.build:
+docker.build.dev:
 	docker build -f Dockerfile.dev -t mim/mim_services:latest .
 
 db.setup:
