@@ -1,0 +1,96 @@
+<h1>Map#index</h1>
+<% @rovers.each_with_index do |rover,index|  %>
+  <button id="<%= index  %>" class="rover">
+    <%= rover.name  %>
+  </button>
+<% end %>
+  <img id="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Curiosity_at_Work_on_Mars_%28Artist%27s_Concept%29.jpg/1600px-Curiosity_at_Work_on_Mars_%28Artist%27s_Concept%29.jpg" alt="mars rover " width="auto" height="150">
+<div id="mapid"></div>
+<div id="result">
+</div>
+
+<script>
+  var mymap = L.map("mapid").setView([51.505, -0.09], 13);
+  let markers = []
+  let images = [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Curiosity_at_Work_on_Mars_%28Artist%27s_Concept%29.jpg/1600px-Curiosity_at_Work_on_Mars_%28Artist%27s_Concept%29.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Perseverance_Landing_Skycrane_%28cropped%29.jpg/600px-Perseverance_Landing_Skycrane_%28cropped%29.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Mars3_iki.jpg/500px-Mars3_iki.jpg"
+  ]
+  var baselayer = new L.tileLayer(
+    "https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png",
+    {
+      zoom: 3,
+      tms: false,
+      accessToken:
+      "sk.eyJ1IjoibWVtb3J5bWFuNTEiLCJhIjoiY2tscXR2bnI4MWc1MDJ2bjNveW1tOGI5eSJ9.2r3FYEeDWJgJixemypXPwg",
+    }
+  )
+    .addTo(mymap)
+    .setZIndex(0);
+  var zoom = 1;
+  var pointList = [];
+  mymap.setView([0, 0], zoom);
+  const rovers = []
+    <% @rovers.each do |rover|   %>
+      rovers.push({
+        name: "<%= rover.name  %>" ,
+        start_point: [<%= rover.start_point[0]  %>,<%= rover.start_point[1]  %> ] ,
+        end_point: [<%= rover.end_point[0]  %>,<%= rover.end_point[1]  %> ],
+      })
+  <% end %>
+
+    console.log(rovers)
+
+  const generatePoints = function(start, end) {
+    console.log(start)
+
+    console.log(end)
+    const differenceX = Math.abs(start[0] - end[0])/10
+    const differenceY = Math.abs(start[1] - end[1])/10
+    console.log(differenceX)
+    console.log(differenceY)
+    var output = []
+    for(var i = 0; i<= 10; i++){
+      output.push([start[0]+differenceX*i, start[1]+ differenceY*i])
+    }
+    return output
+  }
+
+  const drawPoints = function(points){
+    markers.forEach(marker => mymap.removeLayer(marker))
+    points.forEach(function(point){
+      const marker = L.marker([point[0], point[1]])
+      marker.addTo(mymap)
+      markers.push(marker)
+    })
+  }
+
+  const updateImage = function(index){
+    const image = document.getElementById('image')
+    image.src = images[index]
+  }
+
+  pointsList = generatePoints(
+    rovers[0].start_point ,
+    rovers[0].end_point
+  )
+  console.log(pointsList)
+  drawPoints(pointsList)
+
+  const roverButtons = document.querySelectorAll(".rover")
+  console.log(roverButtons)
+
+  const redrawEvent = function(event){
+    console.log("button clicked")
+    console.log(event.target.id)
+    const roverID = event.target.id
+    const rover = rovers[roverID]
+    updateImage(roverID)
+    pointsList = generatePoints(rover.start_point, rover.end_point)
+    drawPoints(pointsList)
+
+  }
+  roverButtons.forEach(button => button.addEventListener("click",redrawEvent))
+
+</script>
