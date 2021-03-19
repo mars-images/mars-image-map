@@ -14,6 +14,10 @@ If you would like to contribute to this project, feel free to create a pull requ
 - Ruby v3.0.0
 - Node v12+
 - Yarn
+- Postgresql
+- Docker
+- docker-compose
+- make
 
 ## get started
 clone the repo
