@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  site: 1
+  itemName: MyString
+  dateAdded: 2021-03-19 22:44:10
+  arrivalTime: 2021-03-19 22:44:10
+  startSol: 1
+  endSol: 1
+  drive: 1
+  contributor: MyString
+  lon: 1.5
+  lat: 1.5
+  z: 1.5
+  'y': 1.5
+  x: 1.5
+  mapPixelH: 1.5
+  mapPixelV: 1.5
+  rot: MyString
+
+two:
+  site: 1
+  itemName: MyString
+  dateAdded: 2021-03-19 22:44:10
+  arrivalTime: 2021-03-19 22:44:10
+  startSol: 1
+  endSol: 1
+  drive: 1
+  contributor: MyString
+  lon: 1.5
+  lat: 1.5
+  z: 1.5
+  'y': 1.5
+  x: 1.5
+  mapPixelH: 1.5
+  mapPixelV: 1.5
+  rot: MyString
